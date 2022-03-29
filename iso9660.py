@@ -293,6 +293,18 @@ class ISO9660(object):
         return self._unpack_raw(17) #TODO
 
     def _unpack_dir_datetime(self):
+        """
+        https://www.angelfire.com/pa2/mpx/iso9660.html
+
+        byte    year;           /* Since 1900. */
+        byte    month;
+        byte    day;
+        byte    hour;
+        byte    minute;
+        byte    second;
+        byte    gmtOffset;      /* 15-minute offset from Universal Time. */
+        """
+
         return self._unpack_raw(7) #TODO
 
 

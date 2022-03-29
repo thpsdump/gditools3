@@ -139,7 +139,25 @@ class ISO9660(_ISO9660_orig):
 
     def print_files(self):
         for i in self.tree():
-            print(i)
+            filename = i
+            if len(filename) > 1:
+                file_record = self.get_record(filename)
+
+                file_date = unpack('!bbbbbbb', file_record['datetime'])
+
+                file_year = file_date[0] + 1900
+                file_month = str(file_date[1]).zfill(2)
+                file_day = str(file_date[2]).zfill(2)
+                file_hour = str(file_date[3]).zfill(2)
+                file_minute = str(file_date[4]).zfill(2)
+                file_second = str(file_date[5]).zfill(2)
+                file_gmtOffset = file_date[6]
+
+                file_date = "%s-%s-%s %s:%s:%s" % ( file_year, file_month, file_day, file_hour, file_minute, file_second )
+
+                #file_date = file_record['datetime'][1:].hex()
+                print("%s\t%s %s" % (file_record['ex_len'], file_date, filename ))
+                #print(self.get_file(filename))
 
 
     def get_bootsector(self, lba = 45000):
@@ -461,7 +479,7 @@ class CdImage():
                 length = self.length - self.binpointer
 
             # Amount of bytes left until beginning of next sector
-            tmp = 2048 - self.binpointer % 2048
+            tmp = int(2048 - self.binpointer % 2048)
             FutureOffset = self.binpointer + length
             realLength = self.realOffset(FutureOffset) - \
                             self.realOffset(self.binpointer)
